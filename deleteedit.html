@@ -1,0 +1,91 @@
+<html>
+
+<body>
+    <meta>
+    <meta>
+    <style>
+        form {
+            background-Color: orange;
+        }
+
+        body {
+            background-Color: rgb(0, 255, 242);
+        }
+    </style>
+    <form onsubmit="saveToLocalStorage(event)">
+        <label> Name</label><br>
+        <input id='username' type="text" name="username" required /><br>
+        <label> EmailId</label><br>
+        <input id='email' type="email" name="emailId" required /><br>
+        <label> Phone Number</label><br>
+        <input id='phonenumber' type="tel" name="phonenumber" /><br>
+        <button> Submit </button><br>
+    </form>
+    <ul id='listOfitems'></ul>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.2.0/axios.min.js"></script>
+    <script>
+        function saveToLocalStorage(event) {
+            event.preventDefault();
+            const name = event.target.username.value;
+            const email = event.target.emailId.value;
+            const phonenumber = event.target.phonenumber.value;
+            // localStorage.setItem('name', name);
+            // localStorage.setItem('email', email);
+            // localStorage.setItem('phonenumber', phonenumber)
+            const obj = {
+                name,
+                email,
+                phonenumber
+            }
+            axios.post("https://crudcrud.com/api/6c458e43a1ac4f7c9735f5923e41ccfd/appointmentdata", obj)
+            .then((response)=>{
+                console.log(response)
+            })
+            .catch((err)=>{
+                console.log(err)
+            })
+            //localStorage.setItem(obj.email, JSON.stringify(obj))*/
+            
+            showListofRegisteredUser(obj)
+        }
+
+        window.addEventListener('DOMContentLoaded', (event) => {
+            Object.keys(localStorage).forEach(key => {
+                const user = JSON.parse(localStorage.getItem(key))
+                showListofRegisteredUser(user)
+            })
+        })
+
+        function showListofRegisteredUser(user) {
+            const parentNode = document.getElementById('listOfitems');
+            const createNewUserHtml = `<li id='${user.email}'>${user.name} - ${user.email} - ${user.phonenumber}
+                                                <button onclick=deleteUser('${user.email}')>Delete</button>
+                                                <button onclick="editUserDetails('${user.email}','${user.name}','${user.phonenumber}')">Edit</button></li>`
+            console.log(createNewUserHtml)
+            parentNode.innerHTML += createNewUserHtml;
+            console.log(parentNode.innerHTML)
+        }
+        function editUserDetails(emailId, name, phonenumber) {
+            document.getElementById('email').value = emailId;
+            document.getElementById('username').value = name;
+            document.getElementById('phonenumber').value = phonenumber;
+
+            deleteUser(emailId)
+        }
+
+        function deleteUser(email) {
+            localStorage.removeItem(email)
+            removeItemFromScreen(email)
+        }
+
+        function removeItemFromScreen(email) {
+            const parentNode = document.getElementById('listOfitems');
+            const elem = document.getElementById(email)
+            parentNode.removeChild(elem);
+        }
+    </script>
+
+
+</body>
+
+</html>
