@@ -67,17 +67,17 @@
             const parentNode = document.getElementById('listOfitems');
             const createNewUserHtml = `<li id='${user._id}'>${user.name} - ${user.email} - ${user.phonenumber}
                                                 <button onclick=deleteUser('${user._id}')>Delete</button>
-                                                <button onclick="editUserDetails('${user._id}','${user.name}','${user.phonenumber}')">Edit</button></li>`
+                                                <button onclick="editUserDetails('${user.email}','${user.name}','${user.phonenumber}','${user._id}')">Edit</button></li>`
             console.log(createNewUserHtml)
             parentNode.innerHTML += createNewUserHtml;
             console.log(parentNode.innerHTML)
         }
-        function editUserDetails(emailId, name, phonenumber) {
+        function editUserDetails(emailId, name, phonenumber,userId) {
             document.getElementById('email').value = emailId;
             document.getElementById('username').value = name;
             document.getElementById('phonenumber').value = phonenumber;
 
-            deleteUser(email)
+            deleteUser(userId)
         }
 //as userId is unique so we neet to change it to user._id,by doing so we are able to delete data
         function deleteUser(userId) {
