@@ -37,7 +37,7 @@
                 email,
                 phonenumber
             }
-            axios.post("https://crudcrud.com/api/6c458e43a1ac4f7c9735f5923e41ccfd/appointmentdata", obj)
+            axios.post("https://crudcrud.com/api/91e3dc68a2f84f28a14f56c50fe4bd74/appointmentdata", obj)
             .then((response)=>{
                 console.log(response)
             })
@@ -46,14 +46,21 @@
             })
             //localStorage.setItem(obj.email, JSON.stringify(obj))*/
             
-            showListofRegisteredUser(obj)
+            //showListofRegisteredUser(obj)
         }
-
+//to get the data back from server axios.get is done with url and print the data on screen
         window.addEventListener('DOMContentLoaded', (event) => {
-            Object.keys(localStorage).forEach(key => {
-                const user = JSON.parse(localStorage.getItem(key))
-                showListofRegisteredUser(user)
+            axios.get("https://crudcrud.com/api/91e3dc68a2f84f28a14f56c50fe4bd74/appointmentdata")
+            .then((response)=>{
+                console.log(response)
+                for(var i=0;i<response.data.length;i++){
+                    showListofRegisteredUser(response.data[i])
+                }
             })
+            .catch((err)=>{
+                console.log(err)
+            })
+            
         })
 
         function showListofRegisteredUser(user) {
