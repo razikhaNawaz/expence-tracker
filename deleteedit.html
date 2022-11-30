@@ -65,9 +65,9 @@
 
         function showListofRegisteredUser(user) {
             const parentNode = document.getElementById('listOfitems');
-            const createNewUserHtml = `<li id='${user.email}'>${user.name} - ${user.email} - ${user.phonenumber}
-                                                <button onclick=deleteUser('${user.email}')>Delete</button>
-                                                <button onclick="editUserDetails('${user.email}','${user.name}','${user.phonenumber}')">Edit</button></li>`
+            const createNewUserHtml = `<li id='${user._id}'>${user.name} - ${user.email} - ${user.phonenumber}
+                                                <button onclick=deleteUser('${user._id}')>Delete</button>
+                                                <button onclick="editUserDetails('${user._id}','${user.name}','${user.phonenumber}')">Edit</button></li>`
             console.log(createNewUserHtml)
             parentNode.innerHTML += createNewUserHtml;
             console.log(parentNode.innerHTML)
@@ -77,17 +77,24 @@
             document.getElementById('username').value = name;
             document.getElementById('phonenumber').value = phonenumber;
 
-            deleteUser(emailId)
+            deleteUser(email)
+        }
+//as userId is unique so we neet to change it to user._id,by doing so we are able to delete data
+        function deleteUser(userId) {
+            axios.delete(`https://crudcrud.com/api/91e3dc68a2f84f28a14f56c50fe4bd74/appointmentdata/${userId}`)
+            .then((response)=>{
+                removeItemFromScreen(userId)
+            })
+            .catch((err)=>{
+                console.log(err)
+            })
+            //localStorage.removeItem(email)
+            
         }
 
-        function deleteUser(email) {
-            localStorage.removeItem(email)
-            removeItemFromScreen(email)
-        }
-
-        function removeItemFromScreen(email) {
+        function removeItemFromScreen(userId) {
             const parentNode = document.getElementById('listOfitems');
-            const elem = document.getElementById(email)
+            const elem = document.getElementById(userId)
             parentNode.removeChild(elem);
         }
     </script>
