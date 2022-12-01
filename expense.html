@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+
+    <style>
+       
+
+        h1 {
+            text-align: center;
+            border: solid;
+            text-shadow: 2px 2px;
+        }
+
+        form {
+            background-Color: orange;
+        }
+
+        body {
+            background-Color: rgb(0, 255, 242);
+        }
+    </style>
+
+    <form onsubmit="saveToLocalStorage(event)">
+        <h1>Expense tracker</h1>
+        <label>Choose expenseamount:</label>
+        <select id='expenseamount' type="number" name="expenseamount" required>
+            <option value="100">100</option>
+            <option value="200">200</option>
+            <option value="300">300</option>
+        </select>
+        <label>Choose description:</label>
+        <select id='description' type="text" name="description" required>
+            <option value="to travel">travel</option>
+            <option value="weekend">weekend</option>
+            <option value="hotel">hotel</option>
+        </select>
+        <label>Choose a category:</label>
+        <select id='category' type="text" name="category" required>
+            <option value="petrol">petrol</option>
+            <option value="movie">movie</option>
+            <option value="food">food</option>
+        </select>
+        <button> Add Expense </button><br>
+    </form>
+    <ul id='listOfitems'></ul>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.2.0/axios.min.js"></script>
+    <script>
+        function saveToLocalStorage(event) {
+            event.preventDefault();
+
+            const expenseamount = event.target.expenseamount.value;
+            const description = event.target.description.value;
+            const category = event.target.category.value;
+
+
+            const obj = {
+                expenseamount,
+                description,
+                category
+            }
+            axios.post("https://crudcrud.com/api/6797f2192af344c89437bd5145d9ecb7/Expensedata", obj)
+                .then((response) => {
+                    console.log(response)
+                    showListofRegisteredUser(response.data)
+                })
+                .catch((err) => {
+                    console.log(err)
+                })
+            //localStorage.setItem(obj.expenseamount, JSON.stringify(obj));
+
+
+        }
+        window.addEventListener('DOMContentLoaded', (event) => {
+            axios.get("https://crudcrud.com/api/6797f2192af344c89437bd5145d9ecb7/Expensedata")
+                .then((response) => {
+                    console.log(response)
+                    for (var i = 0; i < response.data.length; i++) {
+                        showListofRegisteredUser(response.data[i])
+                    }
+                })
+                .catch((err) => {
+                    console.log(err)
+                })
+        })
+
+        function showListofRegisteredUser(user) {
+            document.getElementById('expenseamount').value = ' ';
+            document.getElementById('description').value = ' ';
+            document.getElementById('category').value = ' ';
+            const parentNode = document.getElementById('listOfitems');
+            const createNewUserHtml = `<li id='${user._id}'>${user.expenseamount} - ${user.description} - ${user.category}
+                                    <button onclick=deleteUser('${user._id}')>Delete</button>
+                                    <button onclick="editUserDetails('${user.expenseamount}','${user.description}','${user.category}','${user._id}')">Edit</button></li>`
+            console.log(createNewUserHtml)
+            parentNode.innerHTML += createNewUserHtml;
+            console.log(parentNode.innerHTML)
+        }
+        function editUserDetails(expenseamount, description, category, ExpenseId) {
+            document.getElementById('expenseamount').value = expenseamount;
+            document.getElementById('description').value = description;
+            document.getElementById('category').value = category;
+
+            deleteUser(ExpenseId)
+        }
+
+        function deleteUser(ExpenseId) {
+            axios.delete(`https://crudcrud.com/api/6797f2192af344c89437bd5145d9ecb7/Expensedata/${ExpenseId}`)
+                .then((response) => {
+                    removeItemFromScreen(ExpenseId)
+                })
+                .catch((err) => {
+                    console.log(err)
+                })
+        }
+
+        function removeItemFromScreen(ExpenseId) {
+            const parentNode = document.getElementById('listOfitems');
+            const elem = document.getElementById(ExpenseId)
+            parentNode.removeChild(elem);
+        }
+    </script>
+</body>
+
+</html>
